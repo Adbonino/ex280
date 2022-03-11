@@ -234,13 +234,13 @@ $ oc create secret generic HTPASSWD_SECRET --from-file=htpasswd --dry-run -o yam
 
 Defaults Cluster Roles
 
-admin:puede ver y modificar cualquier recurso excepto la cuota.
-basic-user: puede get info basica de proyectos y users.
-cluster-admin: Super-user. Puede realizar cualquier accion en cualquier proyecto.
-cluster-status: puede ver cluster status information
-edit: puede modificar muchos objetos pero no puede ver o modificar roles o bindings.
-self-provisioner: puede crear sus propios objetos
-view:No puede hacer ninguna modificacion, pero púede ver objetos en un proyecto.No puede modificar roles o bindings.
+- admin:puede ver y modificar cualquier recurso excepto la cuota.
+- basic-user: puede get info basica de proyectos y users.
+- cluster-admin: Super-user. Puede realizar cualquier accion en cualquier proyecto.
+- cluster-status: puede ver cluster status information
+- edit: puede modificar muchos objetos pero no puede ver o modificar roles o bindings.
+- self-provisioner: puede crear sus propios objetos
+- view:No puede hacer ninguna modificacion, pero púede ver objetos en un proyecto.No puede modificar roles o bindings.
 
 ```  
 $ oc adm policy add-role-to-user <role> <user> -n <project>
