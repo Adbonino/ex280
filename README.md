@@ -108,22 +108,23 @@ web console -> Alerts -> Silence
 
 
 
-***********************************************************************************
-MANAGE USER AND POLICIES -- OK
-***********************************************************************************
+## MANAGE USER AND POLICIES
 
+```
 $ sudo yum install httpd-tools
+```
 
-
-Configure the HTPasswd Identity Provider for Authentication
------------------------------------------------------------
+### Configure the HTPasswd Identity Provider for Authentication
 
 creo el archivo con la opcion -c
-$ hspasswd -c -B -b </path_to/htpasswd_file> <user_name> <passord>
 
+```  
+$ hspasswd -c -B -b </path_to/htpasswd_file> <user_name> <passord>
 $ hspasswd -B -b </path_to/htpasswd_file> <user_name> <passord>
+```
 
 Crea el Htpasswd secret
+```
 $ oc create secret generic htpass-secret --from-file=htpasswd=</path_to/htpasswd_file> -n openshift-config
 
 apiVersion: config.openshift.io/v1
@@ -142,8 +143,9 @@ spec:
 $ oc aplly -f <path_to/CR>
 $ oc login -u <username>
 $ oc whoami
-
+```
 LAB:
+```  
 $ hspasswd -c -B users.htpasswd admin   // como le puse la opcion -b me va a pedir el password
 $ for USER in tbonino lbonino
 $ hspasswd -B users.htpasswd tbonino
@@ -167,21 +169,25 @@ spec:
 $ oc apply -f tepasswd.yaml
 $ oc login -u abonino
 $ oc whoami
-
+```
+  
 web console 
 Cluster Settings->Global Configuration -> OAuth
 
-Create and delete Users
------------------------
-$ oc get secret -n openshift-config
+### Create and delete Users
+
+```  
+$ ocget secret -n openshift-config
 $ oc extract secret/HTPASSWD_SECRET --to - -n openshift-config > htpasswd
 Agrego usuarios
 $ hspasswd -B -b htpasswd <user_name> <password>
 $ oc create secret generic HTPASSWD_SECRET --from-file=htpasswd --dry-run -o yaml -n openshift-config | oc replace -f -
 $ oc fet identity
 $ ode get users
-
+```
+  
 LAB:
+```  
 $ oc get secret -n openshift-config
 htpass-secret
 $ oc extract secret/htpass-secret --to - -n openshift-config > users.htpasswd
@@ -202,20 +208,21 @@ $ oc delete identity/users.htpasswd:<user_borrado>
 $ oc get indentity
 $ oc get users
 $ oc delete user/<user_borrado>
+```
 
 
+### Modify user Passwords
 
-Modify user Passwords
----------------------
+```  
 $ oc get secret -n openshift-config
 $ oc extract secret/HTPASSWD_SECRET --to - -n openshift-config > htpasswd
 Moidifico el password
 $ hspasswd -B -b htpasswd <user_name> <password>
 $ oc create secret generic HTPASSWD_SECRET --from-file=htpasswd --dry-run -o yaml -n openshift-config | oc replace -f -
+```
 
+### Modify User and Group Permissions
 
-Modify User and Group Permissions
----------------------------------
 Defaults Cluster Roles
 
 admin:puede ver y modificar cualquier recurso excepto la cuota.
@@ -226,40 +233,46 @@ edit: puede modificar muchos objetos pero no puede ver o modificar roles o bindi
 self-provisioner: puede crear sus propios objetos
 view:No puede hacer ninguna modificacion, pero púede ver objetos en un proyecto.No puede modificar roles o bindings.
 
+```  
 $ oc adm policy add-role-to-user <role> <user> -n <project>
 $ oc adm policy add-role-to-group <role> <group> -n <project>
 $ oc describe rolebinding.rbac -n <project>
 $ oc adm policy add-cluster-role-to-user cluster-admin <user>
 $ oc delete secrets kubeadmin -n kube-system
-
+```
 LAB:
+```  
 $ oc adm policy add-role-to-user admin abonino -n desa1
 $ oc adm policy add-role-to-user edit tbonino -n desa1
 $ oc adm policy add-role-to-user view lbonino -n desa1
 $ oc describe rolebinding.rbac -n desa1
 $ oc adm policy add-cluster-role-to-user cluster-admin admin
 $ oc delete secrets kubeadmin -n kube-system
+```
+### Create and Manage Groups
 
-Create and Manage Groups
-------------------------
-
+```
 $ oc adm groups new <group>
 $ oc adm groups new <group> <user>
 $ oc adm groups add-users <group> <user1> <user2>
 $ oc adm groups remove-users <group> <user1> <user2>
-
+```
+  
 Defult Virtul Group
 system:autheticated
 system:authenticated:oauth
 system:unauthenticated
 
 LAB:
+```
 $ oc new-project demo2
 $ oc adm groups new dev
 $ oc adm groups add-user dev abonino tbonino
 $ oc adm policy add-role-to-group edit dev -n demo2
 $ oc adm groups remove-users dev tbonino
-
+```
+ 
+  
 ***********************************************************************************
 CONTROL ACCESS TO RESOURCES -- OK
 ***********************************************************************************
