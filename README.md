@@ -283,29 +283,32 @@ $ oc adm groups remove-users dev tbonino
  
   
 ***********************************************************************************
-CONTROL ACCESS TO RESOURCES -- OK
+### CONTROL ACCESS TO RESOURCES 
 ***********************************************************************************
 
-Define Role-Based Access Controls
----------------------------------
+### Define Role-Based Access Controls
 
 Creacion de un role local
+```
 $ oc create role <name> --verb=<verb> --resource=<resource> -n <project>
-
+```
 Creacion de un role de cluster
+```
 $ oc create clusterrole <name> --verb=<verb> --resource=<resource>
-
+```
 LAB:
+```
 $ oc create role podview --verb=get --resource=pod -n desa1
 $ oc adm policy add-role-to-user podview abonino --role-namespace=desa1 -n desa1
 $ oc create clusterrole podviewonly --verb=get --resource=pod
 $ oc adm policy add-cluster-role-to-user podviewonly tbonino
 $ oc describe rolebinding.rbac -n desa1
 $ od describe clusterrolebinding.rbac podviewonly
+```
 
-Apply Permissions to Users
---------------------------
+### Apply Permissions to Users
 
+```
 $ oc adm policy who-can <verb> <resource>
 $ oc adm policy add-role-to-user <role> <user>
 $ oc adm policy remove-role-to-user <role> <user>
@@ -318,15 +321,15 @@ $ oc adm policy add-cluster-role-to-user <role> <user>
 $ oc adm policy remove-cluster-role-from-user <role> <user>
 $ oc adm policy add-cluster-role-to-group <role> <group>
 $ oc adm policy remove-cluster-role-from-group <role> <group>
-
+```
 LAB:
+```
 $ oc project demo
 $ oc adm policy who-can get pod
 $ oc adm policy who-can create pod
+```
 
-
-Create and Apply Secrests to Manage Sensitive Information
----------------------------------------------------------
+### Create and Apply Secrests to Manage Sensitive Information
 
 Tipos de secrests:
 kubernetes.io/service-account-token
@@ -336,7 +339,7 @@ kubernetes.io/tls
 Opaque
 
 Ejemplo de secret.yaml
-
+```
 apiVersion: v1
 kind: secret
 metadata:
@@ -347,9 +350,11 @@ data:
   password: aasiDdsyHSDJI=
 
 $ oc create -f secret.yaml
+```
 
 Ejemplo de uso de secret
 
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -366,8 +371,8 @@ spec:
               name: mysecret
               key: username
       restartpolicy: Never		   		
-
-
+```
+```
 apiVersion: v1
 kind: BuilConfig
 metadata:
@@ -381,7 +386,10 @@ spec:
             secretKeyRef:
               name: mysecret
               key: username
+```
+
 LAB:
+```
 $ oc project demousy
 $ echo -n 'abonino' | base64
 $ echo -n 'password' | base64
@@ -389,18 +397,20 @@ usar estos datos para poner en el secrets
 $ oc create -f secret.yaml
 $ oc get secrets -n demo
 $ oc describe secret/mysecret -n demo
+```
 
-Create Service Accountas and Apply Permissions Using Security Context Constraints
----------------------------------------------------------------------------------
+### Create Service Accountas and Apply Permissions Using Security Context Constraints
 
+```
 $ oc get sa
 $ oc create sa <service-account-name>
 $ oc describe sa/<service-account-name>
 Asigna un role a la SA en el projecto actual
 $ oc adm policy add-role-to-user <role> system:serviceaccount:<project>:<service-account-name>
+```
 
 ejemplo sa.yaml
-
+```
 apiVersion: v1
 kind: SecurityContextXConstraints
 metadata:
@@ -418,8 +428,9 @@ user:
 - <service-account-name>
 
 $ oc create -f sa.yaml
-
+```
 LAB:
+```
 $ oc creta sa demosa
 $ oc get sa
 $ oc describe sa demosa
@@ -447,18 +458,20 @@ requiredDropCapabilities:
 $ oc create -f scc-admin.yaml
 $ oc get scc
 $ oc describe scc scc-admin
+```
 
 ***********************************************************************************
-Configure Networking Components -- OK
+### Configure Networking Components 
 ***********************************************************************************
 
-Troubleshoot Software Defined Networking
-----------------------------------------
+### Troubleshoot Software Defined Networking
 
 Mustra el estado del CNO deployment (Cluster network operator)
+```
 $ oc get -n openshift-network-operator deployment/network-operator
-
+```
 ver el estado del CNO
+```
 $ oc get clusteroperator/network
 
 $ oc describe network.config/cluster
@@ -469,15 +482,18 @@ $ oc get -n openshift-dns-operator deployment/dns-operator
 $ oc get clusteroperator/dns
 $ oc describe clusteroperator/dns
 $ oc logs --namespace=openshift-dns-operator deployment/dns-operator
+```
 
 Debuggins Routes
+```
 $ oc get endpoints -n <porject>
 $ oc get route -n <project>
 $ oc get pods -n <project> --template='{{range.items}}HostIP: {{status.hostIP}} PodID: {{.status.podIP}}{{"\n"}}{{end}}'
 $ oc get services -n <project>
 $ oc get endpoints -n <project>
-
+```
 LAB:
+```
 $ oc get -n openshift-network-operator deployment/network-operator
 $ oc get clusteroperator/network
 $ oc describe network.config/cluster
@@ -489,12 +505,16 @@ $ oc get endpoint -n demo3
 $ oc get pods -n demo3 --template='{{range.items}}HostIP: {{status.hostIP}} PodID: {{.status.podIP}}{{"\n"}}{{end}}'
 $ oc get pods -n demo3 -o wide
 $ oc get route -n demo3
+```
 
-Create and Edit External Routes
--------------------------------
+### Create and Edit External Routes
 
+```
 $ oc expose service <service_name>
+```
+
 Crear un route con una etiqeuta y un nombre
+```
 $ oc expose service <service_name> -l name=<label> --name=<route_name>
 $ oc expose service <service_name> --port=<port> --protocol="<protocol>"
 $ oc expose service <service_name> --path=<path>
@@ -503,8 +523,9 @@ $ oc annotate route <route> --overwrite haproxy.router.openshift.io/timeout=<tim
 $ oc annotate route <route> router.openshift.io/<cookie_name>="-<cookie_annotation>"
 $ oc annotate route <route> haproxy.router.openshift.io/ip_whitelist="<ip1 ip2 ip3>"
 $ oc annotate route <route> haproxy.router.openshift.io/rate-limit-connections=true
-
+```
 LAB:
+```
 $ oc project demo
 $ oc get services
 $ oc expose service ruby-hello-world -l name=hello --name=helloworld
@@ -512,11 +533,11 @@ $ oc annotate route helloworld --overwrite haproxy.router.openshift.io/timeout=5
 $ oc annotate route helloworld router.openshift.io/helloworld="-helloworld_annotation"
 $ oc annotate route helloworld haproxy.route.openshift.io/rate-limit-connections=true
 $ oc describe route helloworld
+```
 
+### Control Cluster Network Ingress
 
-Control Cluster Network Ingress
--------------------------------
-
+```
 $ vim example-ingress.yaml
 
 apiVersion: networking.k8s.io/v1beta1
@@ -535,8 +556,10 @@ spec:
             servicePort: 80
 
 $ oc apply -f example-ingress.yaml
+```
 
 LAB:
+```
 $ oc get service -n demo3
 $ oc expose service django-psql-example -n demo3
 $ oc get route -n demo3
@@ -560,17 +583,22 @@ $ oc apply -f demo-ingress.yaml
 $ oc get ingress -n demo3
 $ oc get routes -n demo3
 $ oc describe ingress/demo3-ingress -n demo3
+```
 
-Create a Self Signed Certificate
---------------------------------
+### Create a Self Signed Certificate
+
 
 Crear self-signed certificate
+```
 $ openssl req -x509 -newkey rsa:4096 -nodes -keyout cert.key -out cert.crt
+```
 
 Remove a paddphrase from a key file
+```
 $ openssl rsa -in <password_protected_key_file>.key -out <key_file>.key
-
+```
 LAB:
+```
 $ openssl req -x509 -newkey rsa:4096 -nodes -keyout helloworld.key -out helloworld.crt
 :US
 :Ohio
@@ -586,15 +614,17 @@ $ cat helloworld.key
 
 
 $ openssl rsa -in <password_protected_key_file>.key -out <key_file>.key
+```
 
+### Secure Routes Using TLS Certificates
 
-Secure Routes Using TLS Certificates
-------------------------------------
-
+```
 $ oc create route edge --service=frontend --cert=tls.crt --key=tls.key --hostaname=www.example.com
+```
 
 Examine Route
 
+```
 apiVersion: v1
 kind: Route
 metadata:
@@ -614,9 +644,11 @@ spec:
        -----BEGIN CERTIFICATE-----
        [...]
        -----END CERTIFICATE-----
+```
 
 LAB:
 
+```
 $ oc project demo
 $ oc delete route hellowprld
 $ oc get services
@@ -625,16 +657,17 @@ $ oc create route edge helloworld --service=ruby-hello-world --cert=helloworld.c
 $ oc get routes
 $ oc describe route helloworld
 $ oc edit route helloworld
+```
 
 ***********************************************************************************
-Configure Pod Scheduling -- OK
+### Configure Pod Scheduling
 ***********************************************************************************
 
-Limite Resource Usage
----------------------
+### Limite Resource Usage
+
 
 core-object-counts.yaml
-
+```
 apiVersion: v1
 kind: ResourceQuota
 metadata:
@@ -647,9 +680,9 @@ spec:
     secrets: "10"
     services: "10"
     services.loadbalance: "2"
-
+```
 compute-resources-long-running.yaml
-
+```
 apiVersion: v1
 kind: ResourceQuota
 metadata:
@@ -662,14 +695,15 @@ spec:
     limits.ephemeral-storage: "4Gi"
   scope:
   - NotTerminating  
-
-
+```
+```
 $ oc create -f <file> -n <project_name>
 $ oc create quota <name> --hard=count/<resource>=<quota>,<resource>/<resource>=<quota>
 $ oc get quota -n <project_name>
 $ oc describe quota <quota_name> -n <project_name>
-
+```
 LAB:
+```
 $ vim compute-resources-yaml
 
 apiVersion: v1
@@ -689,16 +723,20 @@ spec:
 $ oc create -f compute-resources-yaml -n demo
 $ oc get quota -n demo
 $ oc describe quota compute-resources -n demo
+```
 
-Scale Applications to Meet Increased Demand
--------------------------------------------
+### Scale Applications to Meet Increased Demand
 
+```
 $ oc scale --replicas=<numbre> dc/<deployment_name>
 $ oc scale --replicas=2 dc/ruby-hello-wolrd
 $ oc autoscale dc/<deployment_name> --min <number> --max <number> --cpu-percent=<percentage>
 $ oc autoscale dc/<deployment_name> --min 1 --max 5 --cpu-percent=75
+```
 
 LAB:
+
+```
 $ oc project demo
 $ oc get pods
 $ oc get deploymentconfig
@@ -721,18 +759,25 @@ spec:
     kind: DeploymentConfig
     name: ruby-hello-world
   targetCPUUtilizationPrecentage: 90
+```
 
-Control Pod Placement Across Cluster Nodes
-------------------------------------------
 
+### Control Pod Placement Across Cluster Nodes
+
+```
 $ oc create configmap -n openshift-config --from-file=policy.cfg <configmap>
+```
 
 Agregar un ConfigMar al Scheduler Operator CR
+```
 $ oc patch Scheduler cluster --type='merge' -p '{"spec":{"policy":{"name":<configmap>}}}
 
 $ oc logs <scheduler_pod> | grep predicates
+```
 
 LAB:
+
+```
 $ vim policy.cfg
 {
 "kind" : "Policy",
@@ -765,20 +810,27 @@ $ oc get pods -n openshift-kube-scheduler
 $ oc logs openshift-kube-scheduler-ip-10-0-142-79.ec2.interna -n openshift-kube-scheduler | grep predicates
 $ oc get configmap -n openshift-config
 $ oc edit configmap pod-scheduler-policy -n openshift-config 
+```
+
 
 ***********************************************************************************
-Configure Cluster Scaling
+### Configure Cluster Scaling
 ***********************************************************************************
 
-Manually Control the Number of Cluster Workers
-----------------------------------------------
+### Manually Control the Number of Cluster Workers
 
+```
 $ oc get machinesets -n openshift-machine-api
+```
 Dos maneras de escalamiento manual.
+
+```
 $ oc scale --replicas=2 machineset <machineset> -n openshift-machine-api
 $ oc edit machineset <machineset> -n openshift-machine-api
+```
 
 LAB: 
+```
 $ oc get machinesets -n openshift-machine-api
 $ oc scale --replicas=2 machineset <el-que-mostro-el-comnado-anterior> -n openshift-machine-api
 $ oc get nodes
@@ -789,13 +841,13 @@ $ oc get machinesets -n openshift-machine-api
 $ oc get nodes
 Vemos tres worker nuevamente
 $ oc get machinesets -n openshift-machine-api
+```
 
-
-Automatically Control the Number of Cluster Workers
----------------------------------------------------
+### Automatically Control the Number of Cluster Workers
 
 Machine Autoscaler
 
+```
 apiVersion: "autoscaling.openshift.io/v1beta1"
 kind: "MachineAutoscaler"
 metadata:
@@ -810,8 +862,13 @@ spec:
     name: "worker-us-east-la"
 
 $ oc create -f <filename.yaml>
+```
+
 
 LAB:
+
+
+```
 $ oc get machinesets -n openshift-machine-api
 3 master 3 worker
 $ vim MachineAutoscaler.yaml
@@ -830,8 +887,9 @@ spec:
 $ oc create -f MachineAutoscaler.yaml
 $ oc get machinesets -n openshift-machine-api
 $ oc edit machineautoscaler worker-autoscaler -n openshift-machine-api
-
+```
 lo edito y o salvo
+```
 $oc describe machineautoscaler weorker-autoscaler -n openshift-machine-api
-
+```
 
