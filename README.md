@@ -406,12 +406,29 @@ $ oc describe secret/mysecret -n demo
 
 ### Create Service Accountas and Apply Permissions Using Security Context Constraints
 
+Una cuenta de servivio permite que un componente acceda directamente a la API. (Sin compartir las credenciales de un usuario normal).
+
+El nombre se deriva de su proyecto:
+
+system:serviceaccount:<project>:<name_sa>
+  
+Cada cuenta de servicio pertenece a dos grupos:
+  
+- system:serviceaccounts (incluye todas las cuentas de servicio del sistema)   
+- system:serviceaccounts:<proyecto>  (Incluye todas las cuentas de servcio del proyecto)
+  
+Cada cuenta de servicio tiene dos secrets asociados. Un token de API y credenciales para Openshift Container Registry.
+
+
+
 ```
 $ oc get sa
-$ oc create sa <service-account-name>
+$ oc create sa <service-account-name>  // la crea en el proyecto actual
 $ oc describe sa/<service-account-name>
 Asigna un role a la SA en el projecto actual
 $ oc adm policy add-role-to-user <role> system:serviceaccount:<project>:<service-account-name>
+  // con la opcion -z le otorgo a la sa acceso a un proyecto.
+$ oc adm policy add-role-to-user <role> -z <service-account-name>  
 ```
 
 ejemplo sa.yaml
@@ -434,11 +451,15 @@ user:
 
 $ oc create -f sa.yaml
 ```
+
+SCC: controlan los permisos de los pods. Incluyen acciones que puede realizar un pod y a que recurso puede acceder.   
+  
 LAB:
+ 
 ```
 $ oc creta sa demosa
 $ oc get sa
-$ oc describe sa demosa
+$ oc describe sa demosa  
 $ vim scc-admin.yaml
 apiVersion: v1
 kind: SecurityContextXConstraints
