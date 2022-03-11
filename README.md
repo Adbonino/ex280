@@ -108,7 +108,7 @@ web console -> Alerts -> Silence
 
 
 ***********************************************************************************
-## MANAGE USER AND POLICIES
+### MANAGE USER AND POLICIES
 ***********************************************************************************
 ```
 $ sudo yum install httpd-tools
