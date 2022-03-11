@@ -419,8 +419,29 @@ Cada cuenta de servicio pertenece a dos grupos:
   
 Cada cuenta de servicio tiene dos secrets asociados. Un token de API y credenciales para Openshift Container Registry.
 
+Cuentas de servicios creadas en cada poryecto por defecto:
+- builder: utiklizada por moduos de compilacion.
+- deployer: lo utilizan los pods de implementacion
+- default: se usa para ejecutar todos los demas pods.
+  
+Usar cuentas de servicio 
+  
+Puede distribuir el token de una cuenta de servicio a aplicaciones externas que deben autenticarse en la API.  
 
+Ver el token de la cuenta de servicio
+  
+```
+$ oc describe secret <secret_name> 
+// ejemplo
+$ oc describe secret robot-token-uzkbh -n top-secret
+// incio de sesion con el token
+$ oc login --token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
 
+$ oc sa get-token <service_account_name>
+```
+  
+  
+  
 ```
 $ oc get sa
 $ oc create sa <service-account-name>  // la crea en el proyecto actual
@@ -428,7 +449,10 @@ $ oc describe sa/<service-account-name>
 Asigna un role a la SA en el projecto actual
 $ oc adm policy add-role-to-user <role> system:serviceaccount:<project>:<service-account-name>
   // con la opcion -z le otorgo a la sa acceso a un proyecto.
-$ oc adm policy add-role-to-user <role> -z <service-account-name>  
+$ oc adm policy add-role-to-user <role> -z <service-account-name> 
+  // permitir que todas las cuentas de servicio del proyecto managers editen recursos del proyecto top-secret
+$ oc adm policy add-role-to-group edit system:serviceaccounts:managers -n top-secret
+ 
 ```
 
 ejemplo sa.yaml
