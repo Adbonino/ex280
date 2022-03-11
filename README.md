@@ -1,11 +1,12 @@
-# ex280
+# Openshif - Administración
+
 ***********************************************************************************
-MANAGE Openshift Container Platform  -- OK
+### MANAGE Openshift Container Platform  -- OK
 ***********************************************************************************
 
-Understand and Use the Command Line and Web Console
----------------------------------------------------
+### Understand and Use the Command Line and Web Console
 
+```
 $ oc login
 $ oc new-project my-project
 $ oc status
@@ -20,19 +21,20 @@ $ oc create --help
 $ oc adm --help
 
 $ tail -10 ocp_cluster/.openshift_install.log
+```
 
 
+### Create and Delete Projects
 
-Create and Delete Projects
---------------------------
-
+```
 $ oc new-project <project-name> --description="<descritpion>" --display-name="<display-name>"
 $ oc get projects
 $ oc project <project_name>
 $ oc delete project <project_name>
+```
 
 LAB:
-
+```
 $ oc new-project demotmp --description="Throw away porject for demo" --display-name="Garbage"
 $ oc new-project demo --description="Demo project for our lesson" --display-name="Demo Project"
 $ oc projects  // muestra con * el actual
@@ -44,10 +46,11 @@ $ oc delete project demotmp
 $ oc get pods
 $ oc get all
 $ oc projects
+```
 
-Import, Export, and Configure Kubernetes Resources
---------------------------------------------------
+### Import, Export, and Configure Kubernetes Resources
 
+```
 $ oc get -o yaml <resource> <resource>.yaml
 $ oc get -o json <resource> <resource>.json
 $ oc create -f <resource>.yaml
@@ -56,8 +59,10 @@ $ oc replace
 $ oc extract
 $ oc apply
 $ oc rsync
+```
 
 LAB:
+```
 $ mkdir resources
 $ oc project demo
 $ oc get all
@@ -67,45 +72,49 @@ $ vim resources/pod.yaml
 $ oc replace -f resources/pod.yaml
 $ oc get secrets
 $ oc extract secret/builder-token-6hn9c --to=resources
+```
 
-Examine Resources and Cluster Status
-------------------------------------
+### Examine Resources and Cluster Status
+
 Web console.
 Dashboards
-
+```
 $ oc adm top node
 $ oc adm top node <node>
 $ oc adm top pod 
 $ oc adm top pod <pod>
+```
+### View Logs
 
-View Logs
----------
-
+```
 $ oc logs -f bc/<buildconfig_name> 
 $ oc logs -f dc/<deploymentconfig_name>
 $ oc logs --version=1  dc/<deploymentconfig_name>
 $ oc logs -f pod/<pod-name> --tail=5
 $ oc logs backend -c <container_name>
 $ oc logs -f pod/backend -c <container_name>
-
+```
 LAB:
+```
 $ oc get pods
 $ oc logs -f pod/<pod_name> --tail=5
 $ oc get all
 $ oc logs -f bc/<deploymentconfig_name>
 $ oc logs --version=1 bc/<deploymentconfig_name>
+```
 
-Monitor Cluster Events and Alerts
----------------------------------
+### Monitor Cluster Events and Alerts
 
+```
 $ oc get events -n <project_name>
 $ oc get events -n openshift-config
-
+```
 LAB:
+```
 $ oc get events -n openshift-controller-manager
+```
 web console -> Alerts -> Silence
  
-
 
 ***********************************************************************************
 ### MANAGE USER AND POLICIES
