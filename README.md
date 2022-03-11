@@ -1,7 +1,7 @@
 # Openshif - Administración
 
 ***********************************************************************************
-### MANAGE Openshift Container Platform  -- OK
+### MANAGE Openshift Container Platform
 ***********************************************************************************
 
 ### Understand and Use the Command Line and Web Console
