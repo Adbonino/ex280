@@ -333,15 +333,15 @@ $ oc adm policy who-can create pod
 
 Tipos de secrests:
 
-kubernetes.io/service-account-token
+- kubernetes.io/service-account-token
 
-kubernetes.io/basic-auth
+- kubernetes.io/basic-auth
 
-kubernetes.io/ssh-auth
+- kubernetes.io/ssh-auth
 
-kubernetes.io/tls
+- kubernetes.io/tls
 
-Opaque
+- Opaque
 
 Ejemplo de secret.yaml
 ```
